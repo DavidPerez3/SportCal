@@ -43,4 +43,9 @@ jobs:
             exit 0
           fi
           git commit -m "chore(data): sync sports calendars [data sync]"
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Push attempt $attempt failed; retrying..."
+            sleep 2
+          done
+          exit 1
