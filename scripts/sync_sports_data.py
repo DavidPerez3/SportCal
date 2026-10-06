@@ -81,7 +81,7 @@ def pick_name(side):
     if not isinstance(side, dict):
         return ''
     club = side.get('club') if isinstance(side.get('club'), dict) else side
-    for key in ('editorialName', 'name', 'abbreviatedName', 'tvCode', 'code'):
+    for key in ('name', 'editorialName', 'abbreviatedName', 'tvCode', 'code'):
         value = club.get(key) if isinstance(club, dict) else None
         if value:
             return str(value).strip()
