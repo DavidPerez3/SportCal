@@ -1,0 +1,46 @@
+name: Sync sports calendars
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/sync_sports_data.py'
+      - '.github/workflows/sync-sports-data.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sportcal-data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sync complete calendars
+        run: python scripts/sync_sports_data.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "sportcal-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/sports-calendar.json app/src/main/assets/sports-calendar.json
+          if git diff --cached --quiet; then
+            echo "No calendar changes"
+            exit 0
+          fi
+          git commit -m "chore(data): sync sports calendars [data sync]"
+          git push
