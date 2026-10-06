@@ -34,3 +34,11 @@ El repositorio incluye `.github/workflows/build-apk.yml`.
 - `app/src/main/assets/index.html`: interfaz, calendario, filtros y eventos.
 - `app/src/main/java/com/variado/sportcal/MainActivity.java`: envoltorio Android + exportación PNG/PDF.
 - `.github/workflows/build-apk.yml`: compilación automática del APK.
+## v0.3.0 — calendarios completos
+
+- Sincronización automática de LaLiga, Champions, Europa League y Euroliga.
+- Ventanas internacionales y Grand Slams incluidos.
+- Más de 1.000 eventos validados antes de publicar los datos.
+- La APK actualiza el calendario al abrirse y conserva la última copia válida para uso sin conexión.
+- PNG/PDF muestran partidos detallados; los días con demasiados encuentros continúan en una sección de detalle para no omitir ninguno.
+
