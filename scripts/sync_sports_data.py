@@ -103,10 +103,10 @@ def euroleague_events():
             dt = parse_utc(raw_date)
             rnd = game.get('round')
             round_name = game.get('roundName') or game.get('roundAlias')
-            if round_name:
-                meta = f'Euroliga · {round_name}'
-            elif rnd not in (None, ''):
+            if rnd not in (None, ''):
                 meta = f'Euroliga · Jornada {rnd}'
+            elif round_name:
+                meta = f'Euroliga · {round_name}'
             else:
                 meta = 'Euroliga'
             confirmed_hour = game.get('confirmedHour')
