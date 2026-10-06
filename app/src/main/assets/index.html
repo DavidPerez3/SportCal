@@ -24,12 +24,12 @@ let calendarMeta=null;
 const active=new Set(Object.keys(comps));const bootNow=new Date();let view=new Date(Date.UTC(bootNow.getFullYear(),bootNow.getMonth(),1));let selected=`${bootNow.getFullYear()}-${String(bootNow.getMonth()+1).padStart(2,'0')}-${String(bootNow.getDate()).padStart(2,'0')}`;
 const $=s=>document.querySelector(s),fmtDate=d=>d.toISOString().slice(0,10),parse=s=>new Date(s+'T00:00:00Z');
 
-let syncError='';
+let syncError='';let calendarSource='incluido';
 function generatedLabel(iso){if(!iso)return '';const d=new Date(iso);if(Number.isNaN(d.getTime()))return '';return new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d)}
 function updateDataStatus(source){const el=$('#dataStatusText');if(!el)return;if(!calendarMeta){el.textContent=syncError||'Cargando calendarios completos…';return}const src=source==='online'?'online':source==='cache'?'copia guardada':'incluido en la APK';const stamp=generatedLabel(calendarMeta.generatedAt);el.innerHTML=`<strong>${events.length.toLocaleString('es-ES')} eventos</strong> · ${src}${stamp?' · '+stamp:''}`;el.title=calendarMeta.counts?Object.entries(calendarMeta.counts).map(([k,v])=>`${comps[k]?.label||k}: ${v}`).join(' · '):''}
-window.applyCalendarData=(payload,source='incluido')=>{if(!payload||!Array.isArray(payload.events)||payload.events.length<1000){window.setCalendarSyncError('Se ha rechazado una actualización incompleta');return}events=payload.events;calendarMeta=payload;syncError='';updateDataStatus(source);render()};
-window.setCalendarSyncing=on=>{const el=$('#dataStatusText');if(!el)return;if(on)el.textContent='Actualizando calendarios…';else if(calendarMeta)updateDataStatus('online');else updateDataStatus()};
-window.setCalendarSyncError=message=>{syncError=message||'No se pudo actualizar';if(calendarMeta)updateDataStatus('cache');else updateDataStatus()};
+window.applyCalendarData=(payload,source='incluido')=>{if(!payload||!Array.isArray(payload.events)||payload.events.length<1000){window.setCalendarSyncError('Se ha rechazado una actualización incompleta');return}events=payload.events;calendarMeta=payload;calendarSource=source;syncError='';updateDataStatus(source);render()};
+window.setCalendarSyncing=on=>{const el=$('#dataStatusText');if(!el)return;if(on)el.textContent='Actualizando calendarios…';else if(calendarMeta)updateDataStatus(calendarSource);else updateDataStatus()};
+window.setCalendarSyncError=message=>{syncError=message||'No se pudo actualizar';if(calendarMeta)updateDataStatus(calendarSource);else updateDataStatus()};
 function happens(e,k){return k>=e.d&&k<=(e.e||e.d)}function filteredEvents(){return events.filter(e=>active.has(e.c))}
 function monthLabel(d){return new Intl.DateTimeFormat('es-ES',{month:'long',year:'numeric',timeZone:'UTC'}).format(d)}
 function renderFilters(){const el=$('#filters');el.innerHTML='';Object.entries(comps).forEach(([id,c])=>{const b=document.createElement('button');b.className='chip'+(active.has(id)?' active':'');b.innerHTML=`<span class="dot" style="background:${c.hex}"></span>${c.label}`;b.onclick=()=>{active.has(id)?active.delete(id):active.add(id);render()};el.appendChild(b)})}
